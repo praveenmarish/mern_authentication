@@ -1,87 +1,31 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+require("dotenv").config({ path: "./config.env" });
+const express = require("express");
+const app = express();
+const connectDB = require("./config/db");
+const errorHandler = require("./middleware/error");
 
-const express = require('express')
-const app = express()
-const bcrypt = require('bcrypt')
-const passport = require('passport')
-const flash = require('express-flash')
-const session = require('express-session')
-const methodOverride = require('method-override')
+connectDB();
 
-const initializePassport = require('./passport-config')
-initializePassport(
-  passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-)
+app.use(express.json());
 
-const users = []
+app.get("/", (req, res, next) => {
+  res.send("Api running");
+});
 
-app.set('view-engine', 'ejs')
-app.use(express.urlencoded({ extended: false }))
-app.use(flash())
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(methodOverride('_method'))
+// Connecting Routes
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/private", require("./routes/private"));
 
-app.get('/', checkAuthenticated, (req, res) => {
-  res.render('index.ejs', { name: req.user.name })
-})
+// Error Handler Middleware
+app.use(errorHandler);
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
-  res.render('login.ejs')
-})
+const PORT = process.env.PORT || 5000;
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
+const server = app.listen(PORT, () =>
+  console.log(`Sever running on port ${PORT}`)
+);
 
-app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs')
-})
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword
-    })
-    res.redirect('/login')
-  } catch {
-    res.redirect('/register')
-  }
-})
-
-app.delete('/logout', (req, res) => {
-  req.logOut()
-  res.redirect('/login')
-})
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/')
-  }
-  next()
-}
-
-app.listen(3000)
+process.on("unhandledRejection", (err, promise) => {
+  console.log(`Logged Error: ${err.message}`);
+  server.close(() => process.exit(1));
+});

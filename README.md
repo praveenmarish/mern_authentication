@@ -1,0 +1,1 @@
+If you have any problem on request header add extention for Access-Control-Allow-Origin extention for your browser
