@@ -26,10 +26,20 @@ const PrivateScreen = () => {
 
     fetchPrivateDate();
   }, []);
+
+  const logout_handler = () =>{
+    localStorage.clear();
+    window.location.href = '/';
+  }
+
   return error ? (
     <span className="error-message">{error}</span>
   ) : (
-    <div>{privateData}</div>
+    <div>{privateData}<br></br>
+      <div>
+        <input type = "button" onClick = {logout_handler} value = "logout"></input>
+      </div>
+    </div>
   );
 };
 
