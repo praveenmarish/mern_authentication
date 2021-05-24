@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./PrivateScreen.css";
+import { useSelector, useDispatch } from 'react-redux'
+import { increment, decrement } from '../../actions';
 
 const PrivateScreen = () => {
   const [error, setError] = useState("");
   const [privateData, setPrivateData] = useState("");
+  const counter = useSelector(state => state.counter);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchPrivateDate = async () => {
@@ -38,6 +42,11 @@ const PrivateScreen = () => {
     <div>{privateData}<br></br>
       <div>
         <input type = "button" onClick = {logout_handler} value = "logout"></input>
+      </div>
+      <div>
+        <h1>counter: {counter}</h1>
+        <button onClick = {() => dispatch(increment())}>+</button>
+        <button onClick = {() => dispatch(decrement())}>-</button>
       </div>
     </div>
   );
