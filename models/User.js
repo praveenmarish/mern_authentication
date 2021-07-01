@@ -44,6 +44,12 @@ UserSchema.methods.getSignedJwtToken = function () {
   });
 };
 
+UserSchema.methods.getSignedJwtRefreshToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.REFRESH_JWT_EXPIRE,
+  });
+};
+
 const User = mongoose.model("User", UserSchema);
 
 module.exports = User;

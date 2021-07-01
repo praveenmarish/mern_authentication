@@ -1,5 +1,6 @@
 const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken")
 
 // @desc    Login user
 exports.login = async (req, res, next) => {
@@ -25,7 +26,10 @@ exports.login = async (req, res, next) => {
       return next(new ErrorResponse("Invalid credentials", 401));
     }
 
-    sendToken(user, 200, res);
+    const accessToken = user.getSignedJwtToken();
+    const refreshToken = user.getSignedJwtRefreshToken();
+    res.status(200).json({ sucess:true, accessToken, refreshToken });
+
   } catch (err) {
     next(err);
   }
@@ -42,13 +46,31 @@ exports.register = async (req, res, next) => {
       password,
     });
 
-    sendToken(user, 200, res);
+    const accessToken = user.getSignedJwtToken();
+    const refreshToken = user.getSignedJwtRefreshToken();
+    res.status(200).json({ sucess:true, accessToken, refreshToken });
+
   } catch (err) {
     next(err);
   }
 };
 
-const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedJwtToken();
-  res.status(statusCode).json({ sucess: true, token });
-};
+// @desc    Get new access token
+exports.getNewAccessToken = async (req, res, next) => {
+  const { refreshToken } = req.body;
+
+  try{
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id);
+    
+    if(!user){
+      return next(new ErrorResponse("Invalid refresh token", 404));
+    }
+    const accessToken = user.getSignedJwtToken();
+    res.status(200).json({ sucess:true, accessToken });
+
+  }catch(err){
+    next(err);
+  }
+}
