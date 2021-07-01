@@ -45,7 +45,7 @@ UserSchema.methods.getSignedJwtToken = function () {
 };
 
 UserSchema.methods.getSignedJwtRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_REFRESH, {
     expiresIn: process.env.REFRESH_JWT_EXPIRE,
   });
 };
