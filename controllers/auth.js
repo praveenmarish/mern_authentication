@@ -1,6 +1,5 @@
 const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/User");
-const jwt = require("jsonwebtoken")
 
 // @desc    Login user
 exports.login = async (req, res, next) => {
@@ -28,8 +27,7 @@ exports.login = async (req, res, next) => {
 
     const accessToken = user.getSignedJwtToken();
     const refreshToken = user.getSignedJwtRefreshToken();
-    res.status(200).json({ sucess:true, accessToken, refreshToken });
-
+    res.status(200).json({ sucess: true, accessToken, refreshToken });
   } catch (err) {
     next(err);
   }
@@ -48,8 +46,7 @@ exports.register = async (req, res, next) => {
 
     const accessToken = user.getSignedJwtToken();
     const refreshToken = user.getSignedJwtRefreshToken();
-    res.status(200).json({ sucess:true, accessToken, refreshToken });
-
+    res.status(200).json({ sucess: true, accessToken, refreshToken });
   } catch (err) {
     next(err);
   }
@@ -59,18 +56,10 @@ exports.register = async (req, res, next) => {
 exports.getNewAccessToken = async (req, res, next) => {
   const { refreshToken } = req.body;
 
-  try{
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-
-    const user = await User.findById(decoded.id);
-    
-    if(!user){
-      return next(new ErrorResponse("Invalid refresh token", 404));
-    }
+  try {
     const accessToken = user.getSignedJwtToken();
-    res.status(200).json({ sucess:true, accessToken });
-
-  }catch(err){
+    res.status(200).json({ sucess: true, accessToken });
+  } catch (err) {
     next(err);
   }
-}
+};
