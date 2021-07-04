@@ -17,14 +17,13 @@ exports.login = async (req, res, next) => {
 
   try {
     // Check that user exists by email
-    const user = email_Getter(email);
-
+    const user = await email_Getter(email);
     if (!user) {
       return next(new ErrorResponse("Invalid credentials", 401));
     }
 
     // Check that password match
-    const isMatch = await user.matchPassword(password);
+    const isMatch = user.matchPassword(password);
 
     if (!isMatch) {
       return next(new ErrorResponse("Invalid credentials", 401));
@@ -43,7 +42,7 @@ exports.register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
-    const user = create_User(username, email, password);
+    const user = await create_User(username, email, password);
     const accessToken = user.getSignedJwtToken();
     const refreshToken = user.getSignedJwtRefreshToken();
     res.status(200).json({ sucess: true, accessToken, refreshToken });
@@ -65,7 +64,7 @@ exports.getNewAccessToken = async (req, res, next) => {
   }
 
   try {
-    const user = id_Getter(decodedRrefreshToken.id);
+    const user = await id_Getter(decodedRrefreshToken.id);
     const accessToken = user.getSignedJwtToken();
     res.status(200).json({ sucess: true, accessToken });
   } catch (err) {

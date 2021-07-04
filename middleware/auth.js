@@ -2,7 +2,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const { TokenVerification } = require("../utils/tokenVerification");
 const { id_Getter } = require("../utils/DbFunctions");
 
-exports.protect = (req, res, next) => {
+exports.protect = async (req, res, next) => {
   let token;
 
   if (
@@ -23,7 +23,7 @@ exports.protect = (req, res, next) => {
   }
 
   try {
-    const user = id_Getter(decoded.id);
+    const user = await id_Getter(decoded.id);
 
     if (!user) {
       return next(new ErrorResponse("No user found with this id", 404));
