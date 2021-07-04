@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
 const ErrorResponse = require("../utils/errorResponse");
-const User = require("../models/User");
+const { TokenVerification } = require("../utils/tokenVerification");
+const { id_Getter } = require("../utils/DbFunctions");
 
-exports.protect = async (req, res, next) => {
+exports.protect = (req, res, next) => {
   let token;
 
   if (
@@ -16,10 +16,14 @@ exports.protect = async (req, res, next) => {
     return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = TokenVerification(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id);
+  if (!decoded) {
+    return next(new ErrorResponse("Token not verified", 404));
+  }
+
+  try {
+    const user = id_Getter(decoded.id);
 
     if (!user) {
       return next(new ErrorResponse("No user found with this id", 404));

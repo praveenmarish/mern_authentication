@@ -1,5 +1,10 @@
 const ErrorResponse = require("../utils/errorResponse");
-const User = require("../models/User");
+const { TokenVerification } = require("../utils/tokenVerification");
+const {
+  id_Getter,
+  email_Getter,
+  create_User,
+} = require("../utils/DbFunctions");
 
 // @desc    Login user
 exports.login = async (req, res, next) => {
@@ -12,7 +17,7 @@ exports.login = async (req, res, next) => {
 
   try {
     // Check that user exists by email
-    const user = await User.findOne({ email }).select("+password");
+    const user = email_Getter(email);
 
     if (!user) {
       return next(new ErrorResponse("Invalid credentials", 401));
@@ -38,12 +43,7 @@ exports.register = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
-    const user = await User.create({
-      username,
-      email,
-      password,
-    });
-
+    const user = create_User(username, email, password);
     const accessToken = user.getSignedJwtToken();
     const refreshToken = user.getSignedJwtRefreshToken();
     res.status(200).json({ sucess: true, accessToken, refreshToken });
@@ -55,8 +55,17 @@ exports.register = async (req, res, next) => {
 // @desc    Get new access token
 exports.getNewAccessToken = async (req, res, next) => {
   const { refreshToken } = req.body;
+  const decodedRrefreshToken = TokenVerification(
+    refreshToken,
+    process.env.JWT_SECRET_REFRESH
+  );
+
+  if (!decodedRrefreshToken) {
+    return next(new ErrorResponse("Token not verified", 404));
+  }
 
   try {
+    const user = id_Getter(decodedRrefreshToken.id);
     const accessToken = user.getSignedJwtToken();
     res.status(200).json({ sucess: true, accessToken });
   } catch (err) {
