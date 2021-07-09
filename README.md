@@ -15,4 +15,5 @@ EMAIL_SERVICE = 'smtp service provider name, for google enter gmail'
 EMAIL_USERNAME = 'user name or mail id'
 EMAIL_PASSWORD = 'smtp password or mail password'
 EMAIL_FROM = 'sender mail to send mail'
+URL= 'domain with /api/auth/passwordreset/'
 ```
