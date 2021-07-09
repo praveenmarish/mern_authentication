@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-//const sendinblue = require("nodemailer-sendinblue-transport");
 
 const sendEmail = (options) => {
   const transporter = nodemailer.createTransport({
@@ -9,14 +8,6 @@ const sendEmail = (options) => {
       pass: process.env.EMAIL_PASSWORD,
     },
   });
-
-  // const transporter = nodemailer.createTransport(
-  //   sendinblue({
-  //     auth: {
-  //       apiKey: process.env.API_KEY,
-  //     },
-  //   })
-  // );
 
   const mailOptions = {
     from: process.env.EMAIL_FROM,

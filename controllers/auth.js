@@ -1,12 +1,12 @@
 const ErrorResponse = require("../utils/errorResponse");
 const { TokenVerification } = require("../utils/tokenVerification");
 const sendEmail = require("../utils/sendEmail");
-const crypto = require("crypto");
-const User = require("../models/User");
+const { TokenEncodeDecode } = require("../utils/ResetToken");
 const {
   id_Getter,
   email_Getter,
   create_User,
+  reset_token_checker,
 } = require("../utils/DbFunctions");
 
 // @desc    Login user
@@ -93,7 +93,7 @@ exports.forgotPassword = async (req, res, next) => {
     await user.save();
 
     // Create reset url to email to provided email
-    const resetUrl = `https://passwordreset/${resetToken}`;
+    const resetUrl = `${process.env.URL}${resetToken}`;
 
     // HTML Message
     const message = `
@@ -128,16 +128,10 @@ exports.forgotPassword = async (req, res, next) => {
 // @desc    Reset User Password
 exports.resetPassword = async (req, res, next) => {
   // Compare token in URL params to hashed token
-  const resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(req.params.resetToken)
-    .digest("hex");
+  const resetPasswordToken = TokenEncodeDecode(req.params.resetToken);
 
   try {
-    const user = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
+    const user = await reset_token_checker(resetPasswordToken);
 
     if (!user) {
       return next(new ErrorResponse("Invalid Token", 400));

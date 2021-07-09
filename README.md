@@ -11,10 +11,8 @@ JWT_SECRET_REFRESH = hex code for encryption
 REFRESH_JWT_EXPIRE = time in integer or relavent time string
 
 For reset password:
-EMAIL_SERVICE = 'smtp service provider'
-EMAIL_USERNAME = 'user name in smtp relay'
-EMAIL_PASSWORD = 'smtp password'
-EMAIL_FROM = 'mail given in smtp to send mail'
-(OR)
-API_KEY = 'smtp service provider api key'
+EMAIL_SERVICE = 'smtp service provider name, for google enter gmail'
+EMAIL_USERNAME = 'user name or mail id'
+EMAIL_PASSWORD = 'smtp password or mail password'
+EMAIL_FROM = 'sender mail to send mail'
 ```

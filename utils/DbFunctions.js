@@ -15,3 +15,10 @@ module.exports.create_User = async (username, email, password) => {
 module.exports.email_Getter = async (email) => {
   return await User.findOne({ email }).select("+password");
 };
+
+module.exports.reset_token_checker = async (resetPasswordToken) => {
+  return await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+};
