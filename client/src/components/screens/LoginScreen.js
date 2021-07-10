@@ -30,7 +30,8 @@ const LoginScreen = ({ history }) => {
         config
       );
 
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
 
       history.push("/");
     } catch (error) {
@@ -61,6 +62,9 @@ const LoginScreen = ({ history }) => {
         <div className="form-group">
           <label htmlFor="password">
             Password:{" "}
+            <Link to="/forgotpassword" className="login-screen__forgotpassword">
+              Forgot Password?
+            </Link>
           </label>
           <input
             type="password"

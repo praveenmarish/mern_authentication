@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./PrivateScreen.css";
-import { useSelector, useDispatch } from 'react-redux'
-import { increment, decrement } from '../../actions';
+import { useSelector, useDispatch } from "react-redux";
+import { increment, decrement } from "../../actions";
 
 const PrivateScreen = () => {
   const [error, setError] = useState("");
   const [privateData, setPrivateData] = useState("");
-  const counter = useSelector(state => state.counter);
+  const counter = useSelector((state) => state.counter);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const PrivateScreen = () => {
       const config = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       };
 
@@ -23,7 +23,7 @@ const PrivateScreen = () => {
         const { data } = await axios.get("/api/private", config);
         setPrivateData(data.data);
       } catch (error) {
-        localStorage.removeItem("authToken");
+        localStorage.removeItem("accessToken");
         setError("You are not authorized please login");
       }
     };
@@ -31,22 +31,24 @@ const PrivateScreen = () => {
     fetchPrivateDate();
   }, []);
 
-  const logout_handler = () =>{
+  const logout_handler = () => {
     localStorage.clear();
-    window.location.href = '/';
-  }
+    window.location.href = "/";
+  };
 
   return error ? (
     <span className="error-message">{error}</span>
   ) : (
-    <div>{privateData}<br></br>
+    <div>
+      {privateData}
+      <br></br>
       <div>
-        <input type = "button" onClick = {logout_handler} value = "logout"></input>
+        <input type="button" onClick={logout_handler} value="logout"></input>
       </div>
       <div>
         <h1>counter: {counter}</h1>
-        <button onClick = {() => dispatch(increment())}>+</button>
-        <button onClick = {() => dispatch(decrement())}>-</button>
+        <button onClick={() => dispatch(increment())}>+</button>
+        <button onClick={() => dispatch(decrement())}>-</button>
       </div>
     </div>
   );

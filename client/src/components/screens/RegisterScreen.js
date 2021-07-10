@@ -23,16 +23,14 @@ const RegisterScreen = ({ history }) => {
     }
 
     try {
-      const { data } = await axios.post(
-        "/api/auth/register",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post("/api/auth/register", {
+        username,
+        email,
+        password,
+      });
 
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
 
       history.push("/");
     } catch (error) {
