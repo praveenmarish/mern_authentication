@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "../../actions";
 import TokenGetter from "../operation/TokenGetter";
 
-const PrivateScreen = () => {
+const PrivateScreen = ({ history }) => {
   const [error, setError] = useState("");
   const [privateData, setPrivateData] = useState("");
   const counter = useSelector((state) => state.counter);
@@ -36,7 +36,7 @@ const PrivateScreen = () => {
     };
 
     fetchPrivateDate();
-  }, []);
+  }, [history]);
 
   const logout_handler = () => {
     localStorage.clear();
