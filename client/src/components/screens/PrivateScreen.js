@@ -3,6 +3,7 @@ import axios from "axios";
 import "./PrivateScreen.css";
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "../../actions";
+import TokenGetter from "../operation/TokenGetter";
 
 const PrivateScreen = () => {
   const [error, setError] = useState("");
@@ -24,7 +25,12 @@ const PrivateScreen = () => {
         setPrivateData(data.data);
       } catch (error) {
         localStorage.removeItem("accessToken");
-        setError("You are not authorized please login");
+        const result = await TokenGetter();
+        if (!result) {
+          localStorage.clear();
+          setError("You are not authorized please login");
+        }
+        window.location.href = "/";
       }
     };
 
