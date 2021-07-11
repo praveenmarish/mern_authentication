@@ -26,11 +26,12 @@ const PrivateScreen = () => {
       } catch (error) {
         localStorage.removeItem("accessToken");
         const result = await TokenGetter();
+        setError("Wait a secound");
         if (!result) {
           localStorage.clear();
           setError("You are not authorized please login");
         }
-        window.location.href = "/";
+        window.location.reload();
       }
     };
 
