@@ -8,6 +8,7 @@ import TokenGetter from "../operation/TokenGetter";
 const PrivateScreen = ({ history }) => {
   const [error, setError] = useState("");
   const [privateData, setPrivateData] = useState("");
+  const [reload, setreload] = useState(Boolean);
   const counter = useSelector((state) => state.counter);
   const dispatch = useDispatch();
 
@@ -24,19 +25,18 @@ const PrivateScreen = ({ history }) => {
         const { data } = await axios.get("/api/private", config);
         setPrivateData(data.data);
       } catch (error) {
-        localStorage.removeItem("accessToken");
-        const result = await TokenGetter();
-        setError("Wait a secound");
-        if (!result) {
+        try {
+          await TokenGetter();
+          setreload(true);
+        } catch (error) {
           localStorage.clear();
           setError("You are not authorized please login");
         }
-        window.location.reload();
       }
     };
 
     fetchPrivateDate();
-  }, [history]);
+  }, [reload]);
 
   const logout_handler = () => {
     localStorage.clear();
