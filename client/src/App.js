@@ -9,12 +9,14 @@ import LoginScreen from "./components/screens/LoginScreen";
 import RegisterScreen from "./components/screens/RegisterScreen";
 import ForgotPasswordScreen from "./components/screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "./components/screens/ResetPasswordScreen";
+import Newone from "./components/screens/new";
 
 const App = () => {
   return (
     <Router>
       <div className="app">
         <Switch>
+          <Route exact path="/new" component={Newone} />
           <PrivateRoute exact path="/" component={PrivateScreen} />
           <Route exact path="/login" component={LoginScreen} />
           <Route exact path="/register" component={RegisterScreen} />

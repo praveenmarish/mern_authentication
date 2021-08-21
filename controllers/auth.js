@@ -21,12 +21,13 @@ exports.login = async (req, res, next) => {
   try {
     // Check that user exists by email
     const user = await email_Getter(email);
+
     if (!user) {
       return next(new ErrorResponse("Invalid credentials", 401));
     }
 
     // Check that password match
-    const isMatch = user.matchPassword(password);
+    const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
       return next(new ErrorResponse("Invalid credentials", 401));

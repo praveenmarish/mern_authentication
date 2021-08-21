@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./PrivateScreen.css";
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "../../actions";
 import TokenGetter from "../operation/TokenGetter";
